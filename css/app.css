@@ -138,11 +138,14 @@ ul.tasks::-webkit-scrollbar-thumb:active { background: var(--muted); }
 
 ul.tasks > li {
   display: flex; flex-direction: column;
+  flex: 0 0 auto;
   background: var(--card); border: 1px solid var(--line);
   border-radius: 14px;
   box-shadow: var(--card-shadow);
-  animation: pop 0.25s ease;
   overflow: hidden;
+}
+ul.tasks > li.new {
+  animation: pop 0.25s ease;
 }
 .task-row {
   display: flex; align-items: center; gap: 10px;

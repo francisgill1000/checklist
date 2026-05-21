@@ -59,12 +59,18 @@
     });
   };
 
+  var seenTaskIds = Object.create(null);
+
   function buildTaskLi(t) {
     var prio = t.priority || 0;
     var li = document.createElement("li");
     var cls = [];
     if (t.done) cls.push("done");
     if (prio) cls.push("p" + prio);
+    if (!seenTaskIds[t.id]) {
+      cls.push("new");
+      seenTaskIds[t.id] = true;
+    }
     li.className = cls.join(" ");
 
     var row = document.createElement("div");

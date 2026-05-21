@@ -1,0 +1,32 @@
+{
+  "name": "Daily Checklist",
+  "short_name": "Checklist",
+  "description": "Personal and team checklists with photos, PDF reports, WhatsApp share, and templates. Works fully offline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0f15",
+  "theme_color": "#6d5ef6",
+  "categories": ["productivity", "utilities", "business"],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add task",
+      "url": "./?action=add",
+      "description": "Quickly add a new task"
+    },
+    {
+      "name": "Export PDF",
+      "url": "./?action=export",
+      "description": "Export today's checklist"
+    }
+  ]
+}

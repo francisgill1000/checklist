@@ -254,5 +254,11 @@
     wire();
     App.render();
     if (regenerated) App.toast(regenerated + " recurring task" + (regenerated === 1 ? "" : "s") + " reset");
+
+    try {
+      var action = new URLSearchParams(location.search).get("action");
+      if (action === "add") setTimeout(App.openAddSheet, 80);
+      else if (action === "export") setTimeout(App.openExportSheet, 80);
+    } catch (e) {}
   });
 })();

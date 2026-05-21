@@ -1,0 +1,49 @@
+@media print {
+  @page { margin: 16mm 14mm; }
+  html, body { background: #fff !important; color: #000 !important; height: auto !important; overflow: visible !important; }
+  body { display: block !important; }
+  .wrap { max-width: none !important; overflow: visible !important; height: auto !important; }
+  .hero {
+    background: #fff !important; color: #000 !important;
+    padding: 0 0 12px !important; border-bottom: 2px solid #000;
+  }
+  .hero h1, .hero .date { color: #000 !important; }
+  .hero-btn, .hero-actions, .list-pill { display: none !important; }
+  .progress {
+    background: #fff !important; border: 1px solid #999 !important;
+    color: #000 !important; backdrop-filter: none !important;
+  }
+  .progress-top .count, .progress-top .pct { color: #000 !important; opacity: 1 !important; }
+  .bar { display: none !important; }
+  .sheet {
+    background: #fff !important; margin-top: 12px !important; padding: 0 !important;
+    border-radius: 0 !important;
+  }
+  ul.tasks {
+    overflow: visible !important; height: auto !important;
+    padding: 0 !important; gap: 6px !important;
+  }
+  ul.tasks > li {
+    background: #fff !important; border: 1px solid #888 !important;
+    box-shadow: none !important; break-inside: avoid; page-break-inside: avoid;
+    border-radius: 4px !important;
+  }
+  .task-row { padding: 8px !important; }
+  .check {
+    width: 16px !important; height: 16px !important;
+    border: 1.5px solid #000 !important; background: #fff !important;
+  }
+  li.done .check { background: #000 !important; }
+  .check svg { stroke: #fff !important; }
+  .task-text { color: #000 !important; font-size: 13px !important; }
+  li.done .task-text { color: #444 !important; text-decoration: line-through; }
+  .flag, .attach, .del, .thumb-btn { display: none !important; }
+  .subtask-zone {
+    border-top: 1px dashed #999 !important; background: #fff !important;
+    padding: 6px 10px 8px 30px !important;
+  }
+  .subtask .stext { color: #000 !important; font-size: 12px !important; }
+  .actions, .sheet-modal, .lightbox, .toast { display: none !important; }
+  .empty { display: none !important; }
+  .task-badges { display: none !important; }
+}

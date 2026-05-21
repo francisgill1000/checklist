@@ -92,8 +92,8 @@
     document.getElementById("addForm").addEventListener("submit", function (e) {
       e.preventDefault();
       var text = document.getElementById("taskInput").value;
-      var p = +document.getElementById("addPriority").value || 0;
-      var r = document.getElementById("addRepeats").value || null;
+      var p = +document.getElementById("addPriority").getAttribute("data-value") || 0;
+      var r = document.getElementById("addRepeats").getAttribute("data-value") || null;
       var task = App.addTask(text, { priority: p, repeats: r });
       if (task) {
         App.statusTab = "pending";
@@ -196,14 +196,6 @@
       App.updateTaskText(App.detailTaskId, e.target.value);
     });
     document.getElementById("dtText").addEventListener("blur", function () { App.render(); });
-    document.getElementById("dtPriority").addEventListener("change", function (e) {
-      App.setPriority(App.detailTaskId, +e.target.value);
-      App.render();
-    });
-    document.getElementById("dtRepeats").addEventListener("change", function (e) {
-      App.setRecurring(App.detailTaskId, e.target.value || null);
-      App.render();
-    });
     document.getElementById("dtAddPhoto").addEventListener("click", function () {
       App.pickImage(App.detailTaskId);
     });

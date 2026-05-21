@@ -6,6 +6,91 @@
   App.openSheet = open;
   App.closeSheet = close;
 
+  /* ---------------- value picker ---------------- */
+  var PRIO_OPTIONS = [
+    { value: "3", label: "High", dot: "p3" },
+    { value: "2", label: "Medium", dot: "p2" },
+    { value: "1", label: "Low", dot: "p1" },
+    { value: "0", label: "None", dot: "none" }
+  ];
+  var REPEAT_OPTIONS = [
+    { value: "", label: "Never" },
+    { value: "daily", label: "Daily" },
+    { value: "weekly", label: "Weekly" },
+    { value: "monthly", label: "Monthly" }
+  ];
+
+  function labelFor(picker, value) {
+    var opts = picker === "priority" ? PRIO_OPTIONS : REPEAT_OPTIONS;
+    for (var i = 0; i < opts.length; i++) if (opts[i].value === String(value)) return opts[i].label;
+    return opts[opts.length - 1].label;
+  }
+  function dotFor(value) {
+    for (var i = 0; i < PRIO_OPTIONS.length; i++) if (PRIO_OPTIONS[i].value === String(value)) return PRIO_OPTIONS[i].dot;
+    return "none";
+  }
+
+  App.setValueBtn = function (btn, picker, value) {
+    if (!btn) return;
+    btn.setAttribute("data-value", String(value == null ? "" : value));
+    btn.querySelector(".vb-text").textContent = labelFor(picker, value);
+    var sw = btn.querySelector(".vb-swatch");
+    if (sw && picker === "priority") {
+      var d = dotFor(value);
+      if (d === "none") {
+        sw.style.background = "transparent";
+        sw.style.border = "2px solid var(--check-border)";
+      } else {
+        var bg = d === "p3" ? "#ef4444" : d === "p2" ? "#f59e0b" : "#3b82f6";
+        sw.style.background = bg;
+        sw.style.border = "none";
+      }
+    }
+  };
+
+  App.openPicker = function (title, options, current, onSelect) {
+    document.getElementById("vpTitle").textContent = title;
+    var wrap = document.getElementById("vpOptions");
+    wrap.innerHTML = "";
+    options.forEach(function (opt) {
+      var btn = document.createElement("button");
+      btn.className = "prio-opt" + (String(opt.value) === String(current) ? " sel" : "");
+      btn.type = "button";
+      var prefix = opt.dot ? '<span class="dot ' + opt.dot + '"></span>' : '<span style="width:14px"></span>';
+      btn.innerHTML = prefix + opt.label + '<span class="opt-check">✓</span>';
+      btn.addEventListener("click", function () {
+        onSelect(opt.value);
+        close("valuePicker");
+      });
+      wrap.appendChild(btn);
+    });
+    open("valuePicker");
+  };
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest("[data-picker]");
+    if (!btn) return;
+    var picker = btn.getAttribute("data-picker");
+    var cur = btn.getAttribute("data-value");
+    if (picker === "priority") {
+      App.openPicker("Priority", PRIO_OPTIONS, cur, function (v) {
+        App.setValueBtn(btn, "priority", v);
+        if (btn.id === "dtPriority" && App.detailTaskId != null) {
+          App.setPriority(App.detailTaskId, +v);
+          App.render();
+        }
+      });
+    } else if (picker === "repeats") {
+      App.openPicker("Repeats", REPEAT_OPTIONS, cur, function (v) {
+        App.setValueBtn(btn, "repeats", v);
+        if (btn.id === "dtRepeats" && App.detailTaskId != null) {
+          App.setRecurring(App.detailTaskId, v || null);
+          App.render();
+        }
+      });
+    }
+  });
+
   /* ---------------- priority sheet ---------------- */
   App.openPrioSheet = function (taskId) {
     App.prioTaskId = taskId;
@@ -28,10 +113,8 @@
   /* ---------------- add task sheet ---------------- */
   App.openAddSheet = function () {
     document.getElementById("taskInput").value = "";
-    var pSel = document.getElementById("addPriority");
-    if (pSel) pSel.value = "0";
-    var rSel = document.getElementById("addRepeats");
-    if (rSel) rSel.value = "";
+    App.setValueBtn(document.getElementById("addPriority"), "priority", "0");
+    App.setValueBtn(document.getElementById("addRepeats"), "repeats", "");
     open("addSheet");
     setTimeout(function () { document.getElementById("taskInput").focus(); }, 60);
   };
@@ -159,10 +242,8 @@
     var t = App.findTask(App.detailTaskId);
     if (!t) { close("taskDetailSheet"); return; }
     document.getElementById("dtText").value = t.text;
-    var rSel = document.getElementById("dtRepeats");
-    rSel.value = t.repeats || "";
-    var pSel = document.getElementById("dtPriority");
-    pSel.value = String(t.priority || 0);
+    App.setValueBtn(document.getElementById("dtPriority"), "priority", t.priority || 0);
+    App.setValueBtn(document.getElementById("dtRepeats"), "repeats", t.repeats || "");
     renderSubtasks();
   }
   function renderSubtasks() {

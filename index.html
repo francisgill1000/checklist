@@ -105,24 +105,21 @@
         <button class="add-btn" type="submit" aria-label="Add task">+</button>
       </form>
       <div class="date-row">
-        <label class="date-field">
+        <div class="date-field">
           <span>Priority</span>
-          <select id="addPriority" class="filter-date">
-            <option value="0">None</option>
-            <option value="3">High</option>
-            <option value="2">Medium</option>
-            <option value="1">Low</option>
-          </select>
-        </label>
-        <label class="date-field">
+          <button type="button" id="addPriority" class="value-btn" data-picker="priority" data-value="0">
+            <span class="vb-swatch" style="background:transparent;border:2px solid var(--check-border)"></span>
+            <span class="vb-text">None</span>
+            <span class="vb-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </button>
+        </div>
+        <div class="date-field">
           <span>Repeats</span>
-          <select id="addRepeats" class="filter-date">
-            <option value="">Never</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-        </label>
+          <button type="button" id="addRepeats" class="value-btn" data-picker="repeats" data-value="">
+            <span class="vb-text">Never</span>
+            <span class="vb-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -252,24 +249,21 @@
         <textarea id="dtText" rows="2" maxlength="300"></textarea>
       </div>
       <div class="date-row">
-        <label class="date-field">
+        <div class="date-field">
           <span>Priority</span>
-          <select id="dtPriority" class="filter-date">
-            <option value="0">None</option>
-            <option value="3">High</option>
-            <option value="2">Medium</option>
-            <option value="1">Low</option>
-          </select>
-        </label>
-        <label class="date-field">
+          <button type="button" id="dtPriority" class="value-btn" data-picker="priority" data-value="0">
+            <span class="vb-swatch" style="background:transparent;border:2px solid var(--check-border)"></span>
+            <span class="vb-text">None</span>
+            <span class="vb-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </button>
+        </div>
+        <div class="date-field">
           <span>Repeats</span>
-          <select id="dtRepeats" class="filter-date">
-            <option value="">Never</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-            <option value="monthly">Monthly</option>
-          </select>
-        </label>
+          <button type="button" id="dtRepeats" class="value-btn" data-picker="repeats" data-value="">
+            <span class="vb-text">Never</span>
+            <span class="vb-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>
+          </button>
+        </div>
       </div>
       <div class="sheet-section-title">Sub-steps</div>
       <div id="dtSubtasks"></div>
@@ -277,6 +271,14 @@
         <button type="button" id="dtAddPhoto" class="ghost-btn">Add photo</button>
         <button type="button" id="dtDelete" class="ghost-btn" style="color:var(--danger);border-color:var(--danger)">Delete task</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Generic value picker -->
+  <div class="sheet-modal" id="valuePicker">
+    <div class="sheet-card">
+      <div class="sheet-title" id="vpTitle">Select</div>
+      <div id="vpOptions"></div>
     </div>
   </div>
 

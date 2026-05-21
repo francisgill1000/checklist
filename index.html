@@ -117,7 +117,8 @@
   }
 
   /* add row */
-  .add-row { display: flex; gap: 10px; margin-bottom: 18px; flex-shrink: 0; }
+  .add-row { display: flex; gap: 10px; flex-shrink: 0; }
+  .add-row-sheet { padding: 4px 4px 6px; }
   .add-row input {
     flex: 1; border: 2px solid transparent;
     background: var(--field);
@@ -296,6 +297,25 @@
   .opt-check { margin-left: auto; color: var(--accent); font-weight: 800; opacity: 0; }
   .prio-opt.sel .opt-check { opacity: 1; }
 
+  /* date filter sheet */
+  .date-row { display: flex; gap: 10px; padding: 4px 8px 10px; }
+  .date-field { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .date-field > span {
+    font-size: 12px; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+  .date-actions { display: flex; gap: 10px; padding: 6px 8px 4px; }
+  .date-actions button {
+    flex: 1; border-radius: 12px; padding: 13px;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    border: none; transition: transform 0.1s;
+  }
+  .date-actions button:active { transform: scale(0.96); }
+  .date-actions .primary-btn { color: #fff; background: var(--accent); }
+  .date-actions .ghost-btn {
+    background: transparent; border: 1.5px solid var(--line); color: var(--muted);
+  }
+
   /* photo viewer */
   .lightbox {
     position: fixed; inset: 0; z-index: 60;
@@ -360,8 +380,8 @@
     display: flex; gap: 10px;
   }
   .actions button {
-    flex: 1; border: none; border-radius: 14px; padding: 15px;
-    font-size: 15px; font-weight: 700; cursor: pointer;
+    flex: 1; border: none; border-radius: 14px; padding: 14px 8px;
+    font-size: 14px; font-weight: 700; cursor: pointer;
     transition: transform 0.1s, background 0.15s, color 0.15s;
   }
   .actions button:active { transform: scale(0.96); }
@@ -375,6 +395,7 @@
     color: var(--muted);
   }
   .actions .ghost:active { background: var(--field); color: var(--danger); }
+  .actions .ghost.filter-on { color: var(--accent); border-color: var(--accent); }
 
   /* theme toggle */
   .theme-toggle {
@@ -414,16 +435,6 @@
     </div>
 
     <div class="sheet">
-      <form class="add-row" id="addForm">
-        <input id="taskInput" type="text" placeholder="Add a task…" autocomplete="off" maxlength="200" />
-        <button class="add-btn" type="submit" aria-label="Add task">+</button>
-      </form>
-      <div class="filter">
-        <input type="date" id="fromDate" class="filter-date" aria-label="From date" />
-        <span class="filter-sep">to</span>
-        <input type="date" id="toDate" class="filter-date" aria-label="To date" />
-        <button type="button" id="allBtn" class="filter-all active">All</button>
-      </div>
       <div class="tabs">
         <button class="tab active" id="tabPending" type="button">Pending<span class="tab-n" id="pendCount">0</span></button>
         <button class="tab" id="tabCompleted" type="button">Completed<span class="tab-n" id="doneCount">0</span></button>
@@ -433,8 +444,9 @@
   </div>
 
   <div class="actions">
-    <button class="primary" id="exportBtn">⬇ Export CSV</button>
-    <button class="ghost" id="clearBtn">Clear all</button>
+    <button class="ghost" id="exportBtn">⬇ Export</button>
+    <button class="ghost" id="filterBtn">⏷ Filter</button>
+    <button class="primary" id="addBtn">+ Add</button>
   </div>
 
   <input type="file" id="fileInput" accept="image/*" multiple style="display:none" />
@@ -463,6 +475,36 @@
     </div>
   </div>
 
+  <div class="sheet-modal" id="addSheet">
+    <div class="sheet-card">
+      <div class="sheet-title">New task</div>
+      <form class="add-row add-row-sheet" id="addForm">
+        <input id="taskInput" type="text" placeholder="What needs doing?" autocomplete="off" maxlength="200" />
+        <button class="add-btn" type="submit" aria-label="Add task">+</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="sheet-modal" id="dateSheet">
+    <div class="sheet-card">
+      <div class="sheet-title">Filter by date</div>
+      <div class="date-row">
+        <label class="date-field">
+          <span>From</span>
+          <input type="date" id="fromDate" class="filter-date" aria-label="From date" />
+        </label>
+        <label class="date-field">
+          <span>To</span>
+          <input type="date" id="toDate" class="filter-date" aria-label="To date" />
+        </label>
+      </div>
+      <div class="date-actions">
+        <button type="button" id="allBtn" class="ghost-btn">Clear</button>
+        <button type="button" id="applyDateBtn" class="primary-btn">Apply</button>
+      </div>
+    </div>
+  </div>
+
 <script>
 (function () {
   "use strict";
@@ -480,6 +522,11 @@
   var fromDateEl = document.getElementById("fromDate");
   var toDateEl = document.getElementById("toDate");
   var allBtn = document.getElementById("allBtn");
+  var filterBtn = document.getElementById("filterBtn");
+  var dateSheet = document.getElementById("dateSheet");
+  var applyDateBtn = document.getElementById("applyDateBtn");
+  var addBtn = document.getElementById("addBtn");
+  var addSheet = document.getElementById("addSheet");
   var tabPending = document.getElementById("tabPending");
   var tabCompleted = document.getElementById("tabCompleted");
   var pendCount = document.getElementById("pendCount");
@@ -711,7 +758,7 @@
       return (b.priority || 0) - (a.priority || 0);   // higher priority first, stable otherwise
     });
     var filtered = hasFilter();
-    allBtn.classList.toggle("active", !filtered);
+    filterBtn.classList.toggle("filter-on", filtered);
 
     var total = dateItems.length;
     var done = 0;
@@ -868,22 +915,38 @@
 
   formEl.addEventListener("submit", function (e) {
     e.preventDefault();
-    addTask(inputEl.value);
+    var v = inputEl.value;
+    addTask(v);
     inputEl.value = "";
-    inputEl.focus();
+    if (v.trim()) closeAddSheet();
+    else inputEl.focus();
+  });
+  function openAddSheet() {
+    addSheet.classList.add("open");
+    setTimeout(function () { inputEl.focus(); }, 60);
+  }
+  function closeAddSheet() { addSheet.classList.remove("open"); }
+  addBtn.addEventListener("click", openAddSheet);
+  addSheet.addEventListener("click", function (e) {
+    if (e.target === addSheet) closeAddSheet();
   });
   fromDateEl.addEventListener("change", render);
   toDateEl.addEventListener("change", render);
-  allBtn.addEventListener("click", function () { fromDateEl.value = ""; toDateEl.value = ""; render(); });
+  allBtn.addEventListener("click", function () {
+    fromDateEl.value = ""; toDateEl.value = "";
+    render();
+    closeDateSheet();
+  });
+  applyDateBtn.addEventListener("click", function () { render(); closeDateSheet(); });
+  filterBtn.addEventListener("click", openDateSheet);
+  dateSheet.addEventListener("click", function (e) {
+    if (e.target === dateSheet) closeDateSheet();
+  });
+  function openDateSheet() { dateSheet.classList.add("open"); }
+  function closeDateSheet() { dateSheet.classList.remove("open"); }
   tabPending.addEventListener("click", function () { statusTab = "pending"; render(); });
   tabCompleted.addEventListener("click", function () { statusTab = "completed"; render(); });
   document.getElementById("exportBtn").addEventListener("click", exportCSV);
-  document.getElementById("clearBtn").addEventListener("click", function () {
-    if (tasks.length === 0) return;
-    if (confirm("Delete all " + tasks.length + " task(s)? This cannot be undone.")) {
-      tasks = []; save(); render();
-    }
-  });
 
   load();
   setHeader();
